@@ -15,7 +15,7 @@ repositories {
 
 Now, you can add the PaletteLoader dependency:
 ```groovy
-compile 'com.github.Musenkishi:PaletteLoader:1.0'
+compile 'com.github.Musenkishi:PaletteLoader:1.0.0'
 ```
 
 ## Usage
