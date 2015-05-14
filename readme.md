@@ -15,7 +15,7 @@ repositories {
 
 Now, you can add the PaletteLoader dependency:
 ```groovy
-compile 'com.github.Musenkishi:PaletteLoader:0.1.0'
+compile 'com.github.Musenkishi:PaletteLoader:1.1.0'
 ```
 
 ## Usage
@@ -24,6 +24,7 @@ Currently PaletteLoader supports classes (and extensions of):
 * View
 * ImageView (masking and background)
 * TextView
+* CardView
 
 If the supplied view is or extends `View`, PaletteLoader will apply the color to the background. If view extends `ImageView` and you use `.mask()`, PaletteLoader will apply the color to the image, not the background. And lastly if view is, or extends `TextView`, the color will be applied to the text, not the background.
 
