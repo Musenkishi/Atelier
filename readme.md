@@ -4,6 +4,8 @@
 
 This is a library aiming to simplify the use of Palette, especially in lists such as ListView, GridView, or RecyclerView.
 
+![](assets/sample.gif)
+
 ## Download
 
 Add the [Jitpack][jit] repository to your project-level or module-level `build.gradle`:
