@@ -143,8 +143,8 @@ public class PaletteLoader {
             return this;
         }
 
-        public PaletteBuilder load(Palette colorScheme) {
-            this.palette = colorScheme;
+        public PaletteBuilder load(Palette palette) {
+            this.palette = palette;
             return this;
         }
 
@@ -331,12 +331,12 @@ public class PaletteLoader {
         @Override
         public void run() {
             if (bitmap != null && !bitmap.isRecycled()) {
-                Palette colorScheme = Palette.generate(bitmap);
-                paletteCache.put(paletteTarget.getId(), colorScheme);
+                Palette palette = Palette.generate(bitmap);
+                paletteCache.put(paletteTarget.getId(), palette);
 
                 PalettePresenter palettePresenter = new PalettePresenter(
                         paletteTarget,
-                        colorScheme,
+                        palette,
                         false
                 );
                 uiHandler.post(palettePresenter);
