@@ -26,7 +26,7 @@ Currently PaletteLoader supports classes (and extensions of):
 * TextView
 * CardView
 
-If the supplied view is or extends `View`, PaletteLoader will apply the color to the background. If view extends `ImageView` and you use `.mask()`, PaletteLoader will apply the color to the image, not the background. And lastly if view is, or extends `TextView`, the color will be applied to the text, not the background.
+If the supplied view is or extends `View`, PaletteLoader will apply the color to the background. If view extends `ImageView` and you use `.mask()`, PaletteLoader will apply the color to the image, not the background. And lastly if view is, or extends `TextView`, the color will be applied to the text, not the background. If view is or extends `CardView`, PaletteLoader will apply the color through `.setCardBackgroundColor()`.
 
 ```java
 PaletteLoader.with(context, uniqueStringForBitmap) //For reuse purposes uniqueStringForBitmap could be the url for the image.
