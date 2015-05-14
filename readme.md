@@ -1,5 +1,7 @@
 # PaletteLoader
 
+![](https://img.shields.io/github/release/Musenkishi/PaletteLoader.svg?label=JitPack%20Maven)
+
 This is a library aiming to simplify the use of Palette, especially in lists such as ListView, GridView, or RecyclerView.
 
 ## Download
