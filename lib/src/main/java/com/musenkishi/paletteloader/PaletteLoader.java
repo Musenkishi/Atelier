@@ -30,6 +30,7 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
 import android.support.v7.graphics.Palette;
+import android.support.v7.widget.CardView;
 import android.util.Pair;
 import android.view.View;
 import android.widget.ImageView;
@@ -103,7 +104,7 @@ public class PaletteLoader {
 
                         Message uiMessage = uiHandler.obtainMessage();
                         uiMessage.what = MSG_DISPLAY_PALETTE;
-                        uiMessage.obj = new Pair<Palette, PaletteTarget>(palette, pair.second);
+                        uiMessage.obj = new Pair<>(palette, pair.second);
                         uiMessage.arg1 = FALSE;
 
                         uiHandler.sendMessage(uiMessage);
@@ -143,8 +144,8 @@ public class PaletteLoader {
             return this;
         }
 
-        public PaletteBuilder load(Palette colorScheme) {
-            this.palette = colorScheme;
+        public PaletteBuilder load(Palette palette) {
+            this.palette = palette;
             return this;
         }
 
@@ -185,7 +186,7 @@ public class PaletteLoader {
                     } else {
                         Message bgMessage = backgroundHandler.obtainMessage();
                         bgMessage.what = MSG_RENDER_PALETTE;
-                        bgMessage.obj = new Pair<Bitmap, PaletteTarget>(bitmap, paletteTarget);
+                        bgMessage.obj = new Pair<>(bitmap, paletteTarget);
                         backgroundHandler.sendMessage(bgMessage);
                     }
                 }
@@ -203,6 +204,9 @@ public class PaletteLoader {
     private static void applyColorToView(final PaletteTarget target, int color, boolean fromCache) {
         if (target.getView() instanceof TextView) {
             applyColorToView((TextView) target.getView(), color, fromCache);
+            return;
+        } else if (target.getView() instanceof CardView) {
+            applyColorToCardView((CardView) target.getView(), color, fromCache);
             return;
         }
         if (fromCache) {
@@ -291,6 +295,23 @@ public class PaletteLoader {
         }
     }
 
+    private static void applyColorToCardView(final CardView cardView, int color, boolean fromCache) {
+        if (fromCache) {
+            cardView.setCardBackgroundColor(color);
+        } else {
+            Integer colorFrom = Color.parseColor("#FFFAFAFA"); //Default light CardView color.
+            Integer colorTo = color;
+            ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+            colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animator) {
+                    cardView.setCardBackgroundColor((Integer) animator.getAnimatedValue());
+                }
+            });
+            colorAnimation.start();
+        }
+    }
+
     /**
      * Is it null? Is that null? What about that one? Is that null too? What about this one?
      * And this one? Is this null? Is null even null? How can null be real if our eyes aren't real?
@@ -331,12 +352,12 @@ public class PaletteLoader {
         @Override
         public void run() {
             if (bitmap != null && !bitmap.isRecycled()) {
-                Palette colorScheme = Palette.generate(bitmap);
-                paletteCache.put(paletteTarget.getId(), colorScheme);
+                Palette palette = Palette.generate(bitmap);
+                paletteCache.put(paletteTarget.getId(), palette);
 
                 PalettePresenter palettePresenter = new PalettePresenter(
                         paletteTarget,
-                        colorScheme,
+                        palette,
                         false
                 );
                 uiHandler.post(palettePresenter);
@@ -445,18 +466,4 @@ public class PaletteLoader {
             onPaletteRenderedListener.onRendered(palette);
         }
     }
-
-//    /**
-//     * Will return a {@link android.support.v7.graphics.Palette} if it's available in the cache
-//     * @param id The URL or ID that was used to render the {@link android.support.v7.graphics.Palette}.
-//     * @return The desired {@link android.support.v7.graphics.Palette} if available, otherwise null.
-//     */
-//    public static Palette getPaletteFromCache(String id) {
-//        if (paletteCache.containsKey(id)){
-//            return paletteCache.get(id);
-//        } else {
-//            return null;
-//        }
-//    }
-
 }
