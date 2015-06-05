@@ -36,6 +36,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.musenkishi.paletteloader.stuff.VibrantType;
+
 import org.apache.commons.collections4.map.LRUMap;
 
 import java.util.Collections;
@@ -131,7 +133,7 @@ public class PaletteLoader {
         private Bitmap bitmap;
         private boolean maskDrawable;
         private int fallbackColor = Color.TRANSPARENT;
-        private PaletteRequest paletteRequest = new PaletteRequest(PaletteRequest.SwatchType.REGULAR_VIBRANT, PaletteRequest.SwatchColor.BACKGROUND);
+        private PaletteRequest paletteRequest = new PaletteRequest(new VibrantType(SwatchColor.BACKGROUND));
         private Palette palette;
         private OnPaletteRenderedListener onPaletteRenderedListener;
 

@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +17,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.musenkishi.paletteloader.PaletteLoader;
 import com.musenkishi.paletteloader.PaletteRequest;
+import com.musenkishi.paletteloader.SwatchColor;
+import com.musenkishi.paletteloader.stuff.VibrantType;
 
 /**
  * A simple adapter for loading countries names and images.
@@ -63,14 +64,12 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
                     PaletteLoader.with(context, url)
                             .load(bitmap)
                             .setPaletteRequest(new PaletteRequest(
-                                    PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                    PaletteRequest.SwatchColor.BACKGROUND))
+                                    new VibrantType(SwatchColor.BACKGROUND)))
                             .into(viewHolder.rootView);
                     PaletteLoader.with(context, url)
                             .load(bitmap)
                             .setPaletteRequest(new PaletteRequest(
-                                    PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                    PaletteRequest.SwatchColor.TEXT_TITLE))
+                                    new VibrantType(SwatchColor.TEXT_TITLE)))
                             .into(viewHolder.textView);
                 }
                 return false;
