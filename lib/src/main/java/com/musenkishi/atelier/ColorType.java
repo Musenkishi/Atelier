@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
-
-import android.support.v7.graphics.Palette;
-
-import com.musenkishi.paletteloader.ColorType;
+package com.musenkishi.atelier;
 
 /**
- * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
- * from {@link Palette}.getDarkMutedSwatch().
+ * An enum representing the different colors available in a
+ * {@link android.support.v7.graphics.Palette.Swatch}
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public class DarkMutedSwatch extends AbstractSwatch {
-
-    public DarkMutedSwatch(ColorType colorType) {
-        super(colorType);
-    }
-
-    @Override
-    public int getColor(Palette palette) {
-        return getSwatchColor(palette, palette.getDarkMutedSwatch());
-    }
+public enum ColorType {
+    BACKGROUND,
+    TEXT_BODY,
+    TEXT_TITLE
 }

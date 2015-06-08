@@ -1,4 +1,4 @@
-package com.musenkishi.paletteloader.sample;
+package com.musenkishi.atelier.sample;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,10 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
-import com.musenkishi.paletteloader.PaletteLoader;
-import com.musenkishi.paletteloader.PaletteRequest;
-import com.musenkishi.paletteloader.ColorType;
-import com.musenkishi.paletteloader.swatch.DarkVibrantSwatch;
+import com.musenkishi.atelier.Atelier;
+import com.musenkishi.atelier.ColorType;
+import com.musenkishi.atelier.swatch.DarkVibrantSwatch;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,23 +25,19 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(new CountryAdapter());
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingactionbutton);
-        loadRandomPaletteIntoFAB(floatingActionButton);
+        loadSamplePaletteIntoFAB(floatingActionButton);
     }
 
-    private void loadRandomPaletteIntoFAB(FloatingActionButton floatingActionButton) {
+    private void loadSamplePaletteIntoFAB(FloatingActionButton floatingActionButton) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
-        PaletteLoader.with(this, "sample")
+        Atelier.with(this, "sample")
                 .load(bitmap)
-                .setPaletteRequest(new PaletteRequest(
-                        new DarkVibrantSwatch(ColorType.BACKGROUND)
-                ))
+                .swatch(new DarkVibrantSwatch(ColorType.BACKGROUND))
                 .into(floatingActionButton);
 
-        PaletteLoader.with(this, "sample")
+        Atelier.with(this, "sample")
                 .load(bitmap)
-                .setPaletteRequest(new PaletteRequest(
-                        new DarkVibrantSwatch(ColorType.TEXT_TITLE)
-                ))
+                .swatch(new DarkVibrantSwatch(ColorType.TEXT_TITLE))
                 .mask()
                 .into(floatingActionButton);
     }

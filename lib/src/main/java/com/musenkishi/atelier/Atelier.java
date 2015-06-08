@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader;
+package com.musenkishi.atelier;
 
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
@@ -38,7 +38,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.musenkishi.paletteloader.swatch.VibrantSwatch;
+import com.musenkishi.atelier.swatch.Swatch;
+import com.musenkishi.atelier.swatch.VibrantSwatch;
 
 import org.apache.commons.collections4.map.LRUMap;
 
@@ -53,7 +54,7 @@ import java.util.concurrent.Executors;
  * <p/>
  * Created by Freddie (Musenkishi) Lust-Hed on 2014-10-21.
  */
-public class PaletteLoader {
+public class Atelier {
 
     private static final int MSG_RENDER_PALETTE = 4194;
     private static final int MSG_DISPLAY_PALETTE = 4195;
@@ -69,31 +70,7 @@ public class PaletteLoader {
 
     private static Map<String, Palette> paletteCache;
     private static ExecutorService executorService = Executors.newFixedThreadPool(MAX_CONCURRENT_THREADS);
-
-    private PaletteLoader() {
-        //Don't use
-    }
-
-    public static PaletteBuilder with(Context context, String id) {
-        if (paletteCache == null) {
-            paletteCache = Collections.synchronizedMap(
-                    new LRUMap<String, Palette>(MAX_ITEMS_IN_CACHE)
-            );
-        }
-        if (uiHandler == null || backgroundHandler == null) {
-            setupHandlers(context);
-        }
-        return new PaletteBuilder(id);
-    }
-
-    private static void setupHandlers(Context context) {
-        HandlerThread handlerThread = new HandlerThread("palette-loader-background");
-        handlerThread.start();
-        backgroundHandler = new Handler(handlerThread.getLooper(), sCallback);
-        uiHandler = new Handler(context.getMainLooper(), sCallback);
-    }
-
-    private static Handler.Callback sCallback = new Handler.Callback() {
+    private static Handler.Callback callback = new Handler.Callback() {
         @Override
         public boolean handleMessage(Message message) {
 
@@ -129,79 +106,32 @@ public class PaletteLoader {
         }
     };
 
-    public static class PaletteBuilder {
+    private Atelier() {
+        //Don't use
+    }
 
-        private String id;
-        private Bitmap bitmap;
-        private boolean maskDrawable;
-        private int fallbackColor = Color.TRANSPARENT;
-        private PaletteRequest paletteRequest = new PaletteRequest(new VibrantSwatch(ColorType.BACKGROUND));
-        private Palette palette;
-        private OnPaletteRenderedListener onPaletteRenderedListener;
-
-        public PaletteBuilder(String id) {
-            this.id = id;
+    public static AtelierBuilder with(Context context, String id) {
+        if (paletteCache == null) {
+            paletteCache = Collections.synchronizedMap(
+                    new LRUMap<String, Palette>(MAX_ITEMS_IN_CACHE)
+            );
         }
-
-        public PaletteBuilder load(Bitmap bitmap) {
-            this.bitmap = bitmap;
-            return this;
+        if (uiHandler == null || backgroundHandler == null) {
+            setupHandlers(context);
         }
+        return new AtelierBuilder(id);
+    }
 
-        public PaletteBuilder load(Palette palette) {
-            this.palette = palette;
-            return this;
-        }
-
-        public PaletteBuilder mask() {
-            maskDrawable = true;
-            return this;
-        }
-
-        public PaletteBuilder fallbackColor(int fallbackColor) {
-            this.fallbackColor = fallbackColor;
-            return this;
-        }
-
-        public PaletteBuilder setPaletteRequest(PaletteRequest paletteRequest) {
-            this.paletteRequest = paletteRequest;
-            return this;
-        }
-
-        public PaletteBuilder setListener(OnPaletteRenderedListener onPaletteRenderedListener) {
-            this.onPaletteRenderedListener = onPaletteRenderedListener;
-            return this;
-        }
-
-        public void into(View view) {
-            final PaletteTarget paletteTarget = new PaletteTarget(id, paletteRequest, view, maskDrawable, fallbackColor, onPaletteRenderedListener);
-            if (palette != null) {
-                paletteCache.put(paletteTarget.getId(), palette);
-                applyColorToView(paletteTarget, palette, false);
-                callListener(palette, onPaletteRenderedListener);
-            } else {
-                if (paletteCache.get(id) != null) {
-                    Palette palette = paletteCache.get(id);
-                    applyColorToView(paletteTarget, palette, true);
-                    callListener(palette, onPaletteRenderedListener);
-                } else {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        executorService.submit(new PaletteRenderer(bitmap, paletteTarget));
-                    } else {
-                        Message bgMessage = backgroundHandler.obtainMessage();
-                        bgMessage.what = MSG_RENDER_PALETTE;
-                        bgMessage.obj = new Pair<>(bitmap, paletteTarget);
-                        backgroundHandler.sendMessage(bgMessage);
-                    }
-                }
-            }
-        }
-
+    private static void setupHandlers(Context context) {
+        HandlerThread handlerThread = new HandlerThread("palette-loader-background");
+        handlerThread.start();
+        backgroundHandler = new Handler(handlerThread.getLooper(), callback);
+        uiHandler = new Handler(context.getMainLooper(), callback);
     }
 
     private static void applyColorToView(PaletteTarget target, Palette palette, boolean fromCache) {
         if (!isViewRecycled(target)) {
-            applyColorToView(target, target.getPaletteRequest().getColor(palette), fromCache);
+            applyColorToView(target, target.getSwatch().getColor(palette), fromCache);
         }
     }
 
@@ -338,7 +268,7 @@ public class PaletteLoader {
                         floatingActionButton.setBackgroundTintList(ColorUtils.generateColorStateList(color));
                     }
                 });
-                colorAnimation.setDuration(1000);
+                colorAnimation.setDuration(300);
                 colorAnimation.start();
             }
         }
@@ -415,7 +345,7 @@ public class PaletteLoader {
      * <p/>
      * <p>Checks whether the view has been recycled or not.</p>
      *
-     * @param target A {@link com.musenkishi.paletteloader.PaletteLoader.PaletteTarget} to check
+     * @param target A {@link Atelier.PaletteTarget} to check
      * @return true is view has been recycled, otherwise false.
      */
     private static boolean isViewRecycled(PaletteTarget target) {
@@ -434,6 +364,86 @@ public class PaletteLoader {
         } else {
             return false;
         }
+    }
+
+    private static void callListener(Palette palette, OnPaletteRenderedListener onPaletteRenderedListener) {
+        if (onPaletteRenderedListener != null) {
+            onPaletteRenderedListener.onRendered(palette);
+        }
+    }
+
+    public interface OnPaletteRenderedListener {
+        void onRendered(Palette palette);
+    }
+
+    public static class AtelierBuilder {
+
+        private String id;
+        private Bitmap bitmap;
+        private boolean maskDrawable;
+        private int fallbackColor = Color.TRANSPARENT;
+        private Swatch swatch = new VibrantSwatch(ColorType.BACKGROUND);
+        private Palette palette;
+        private OnPaletteRenderedListener onPaletteRenderedListener;
+
+        public AtelierBuilder(String id) {
+            this.id = id;
+        }
+
+        public AtelierBuilder load(Bitmap bitmap) {
+            this.bitmap = bitmap;
+            return this;
+        }
+
+        public AtelierBuilder load(Palette palette) {
+            this.palette = palette;
+            return this;
+        }
+
+        public AtelierBuilder mask() {
+            maskDrawable = true;
+            return this;
+        }
+
+        public AtelierBuilder fallbackColor(int fallbackColor) {
+            this.fallbackColor = fallbackColor;
+            return this;
+        }
+
+        public AtelierBuilder swatch(Swatch swatch) {
+            this.swatch = swatch;
+            return this;
+        }
+
+        public AtelierBuilder listener(OnPaletteRenderedListener onPaletteRenderedListener) {
+            this.onPaletteRenderedListener = onPaletteRenderedListener;
+            return this;
+        }
+
+        public void into(View view) {
+            final PaletteTarget paletteTarget = new PaletteTarget(id, swatch, view, maskDrawable, fallbackColor, onPaletteRenderedListener);
+            if (palette != null) {
+                paletteCache.put(paletteTarget.getId(), palette);
+                applyColorToView(paletteTarget, palette, false);
+                callListener(palette, onPaletteRenderedListener);
+            } else {
+                if (paletteCache.get(id) != null) {
+                    Palette palette = paletteCache.get(id);
+                    applyColorToView(paletteTarget, palette, true);
+                    callListener(palette, onPaletteRenderedListener);
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        executorService.submit(new PaletteRenderer(bitmap, paletteTarget));
+                    } else {
+                        Message bgMessage = backgroundHandler.obtainMessage();
+                        bgMessage.what = MSG_RENDER_PALETTE;
+                        bgMessage.obj = new Pair<>(bitmap, paletteTarget);
+                        backgroundHandler.sendMessage(bgMessage);
+                    }
+                }
+            }
+        }
+
     }
 
     private static class PaletteRenderer implements Runnable {
@@ -483,14 +493,15 @@ public class PaletteLoader {
 
     private static class PaletteTarget {
         private String id;
-        private PaletteRequest paletteRequest;
+        //        private PaletteRequest paletteRequest;
+        private Swatch swatch;
         private View view;
         private boolean maskDrawable;
         private OnPaletteRenderedListener onPaletteRenderedListener;
 
-        private PaletteTarget(String id, PaletteRequest paletteRequest, View view, boolean maskDrawable, int fallbackColor, OnPaletteRenderedListener onPaletteRenderedListener) {
+        private PaletteTarget(String id, Swatch swatch, View view, boolean maskDrawable, int fallbackColor, OnPaletteRenderedListener onPaletteRenderedListener) {
             this.id = id;
-            this.paletteRequest = paletteRequest;
+            this.swatch = swatch;
             this.view = view;
             this.view.setTag(new PaletteTag(this.id, fallbackColor));
             this.maskDrawable = maskDrawable;
@@ -501,8 +512,8 @@ public class PaletteLoader {
             return id;
         }
 
-        public PaletteRequest getPaletteRequest() {
-            return paletteRequest;
+        public Swatch getSwatch() {
+            return swatch;
         }
 
         public View getView() {
@@ -551,16 +562,6 @@ public class PaletteLoader {
 
         public NoPaletteTagFoundException(String message) {
             super(message);
-        }
-    }
-
-    public interface OnPaletteRenderedListener {
-        abstract void onRendered(Palette palette);
-    }
-
-    private static void callListener(Palette palette, OnPaletteRenderedListener onPaletteRenderedListener) {
-        if (onPaletteRenderedListener != null) {
-            onPaletteRenderedListener.onRendered(palette);
         }
     }
 }

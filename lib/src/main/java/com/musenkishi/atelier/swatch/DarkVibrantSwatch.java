@@ -14,15 +14,25 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader;
+package com.musenkishi.atelier.swatch;
+
+import android.support.v7.graphics.Palette;
+
+import com.musenkishi.atelier.ColorType;
 
 /**
- * An enum representing the different colors available in a
- * {@link android.support.v7.graphics.Palette.Swatch}
+ * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
+ * from {@link Palette}.getDarkVibrantSwatch().
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public enum ColorType {
-    BACKGROUND,
-    TEXT_BODY,
-    TEXT_TITLE
+public class DarkVibrantSwatch extends AbstractSwatch {
+
+    public DarkVibrantSwatch(ColorType colorType) {
+        super(colorType);
+    }
+
+    @Override
+    public int getColor(Palette palette) {
+        return getSwatchColor(palette, palette.getDarkVibrantSwatch());
+    }
 }

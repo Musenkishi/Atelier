@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
+package com.musenkishi.atelier.swatch;
 
 import android.support.v7.graphics.Palette;
 
-import com.musenkishi.paletteloader.ColorType;
+import com.musenkishi.atelier.ColorType;
 
 /**
  * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
- * from {@link Palette}.getLightVibrantSwatch().
+ * from {@link Palette}.getMutedSwatch().
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public class LightVibrantSwatch extends AbstractSwatch {
+public class MutedSwatch extends AbstractSwatch {
 
-    public LightVibrantSwatch(ColorType colorType) {
+    public MutedSwatch(ColorType colorType) {
         super(colorType);
     }
 
     @Override
     public int getColor(Palette palette) {
-        return getSwatchColor(palette, palette.getLightVibrantSwatch());
+        return getSwatchColor(palette, palette.getMutedSwatch());
     }
 }

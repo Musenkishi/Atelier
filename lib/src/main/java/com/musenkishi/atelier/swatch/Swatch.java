@@ -14,25 +14,17 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
+package com.musenkishi.atelier.swatch;
 
 import android.support.v7.graphics.Palette;
 
-import com.musenkishi.paletteloader.ColorType;
-
 /**
- * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
- * from {@link Palette}.getVibrantSwatch().
+ * An interface representing the basic function that
+ * {@link com.musenkishi.atelier.Atelier} wants (getColor()).
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public class VibrantSwatch extends AbstractSwatch {
+public interface Swatch {
 
-    public VibrantSwatch(ColorType colorType) {
-        super(colorType);
-    }
+    int getColor(Palette palette);
 
-    @Override
-    public int getColor(Palette palette) {
-        return getSwatchColor(palette, palette.getVibrantSwatch());
-    }
 }

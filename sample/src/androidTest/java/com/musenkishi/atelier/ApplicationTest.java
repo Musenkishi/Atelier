@@ -1,4 +1,4 @@
-package com.musenkishi.paletteloader;
+package com.musenkishi.atelier;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
+package com.musenkishi.atelier.swatch;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
 
-import com.musenkishi.paletteloader.ColorType;
+import com.musenkishi.atelier.ColorType;
 
 /**
  * An abstract class containing functions that should be available for all child classes.

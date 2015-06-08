@@ -14,25 +14,25 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
+package com.musenkishi.atelier.swatch;
 
 import android.support.v7.graphics.Palette;
 
-import com.musenkishi.paletteloader.ColorType;
+import com.musenkishi.atelier.ColorType;
 
 /**
  * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
- * from {@link Palette}.getDarkVibrantSwatch().
+ * from {@link Palette}.getLightVibrantSwatch().
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public class DarkVibrantSwatch extends AbstractSwatch {
+public class LightVibrantSwatch extends AbstractSwatch {
 
-    public DarkVibrantSwatch(ColorType colorType) {
+    public LightVibrantSwatch(ColorType colorType) {
         super(colorType);
     }
 
     @Override
     public int getColor(Palette palette) {
-        return getSwatchColor(palette, palette.getDarkVibrantSwatch());
+        return getSwatchColor(palette, palette.getLightVibrantSwatch());
     }
 }

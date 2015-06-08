@@ -14,17 +14,25 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader.swatch;
+package com.musenkishi.atelier.swatch;
 
 import android.support.v7.graphics.Palette;
 
+import com.musenkishi.atelier.ColorType;
+
 /**
- * An interface representing the basic function that
- * {@link com.musenkishi.paletteloader.PaletteRequest} wants (getColor()).
+ * A Swatch delegate representing the {@link android.support.v7.graphics.Palette.Swatch}
+ * from {@link Palette}.getLightMutedSwatch().
  * <p>Created by Freddie (Musenkishi) Lust-Hed on 04/06/15.</p>
  */
-public interface Swatch {
+public class LightMutedSwatch extends AbstractSwatch {
 
-    int getColor(Palette palette);
+    public LightMutedSwatch(ColorType colorType) {
+        super(colorType);
+    }
 
+    @Override
+    public int getColor(Palette palette) {
+        return getSwatchColor(palette, palette.getLightMutedSwatch());
+    }
 }

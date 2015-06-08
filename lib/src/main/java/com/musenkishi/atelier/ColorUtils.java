@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.musenkishi.paletteloader;
+package com.musenkishi.atelier;
 
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -29,8 +29,8 @@ public class ColorUtils {
      * Will generate a {@link ColorStateList} based on the color provided.
      * The generated {@link ColorStateList} will contain 3 different colors based on the provided;
      * a regular, a greyed out (disabled state), and a darkened (pressed state).
-     * @param color
-     * @return
+     * @param color The color you want the ColorStateList based on
+     * @return a ColorStateList based on provided color
      */
     public static ColorStateList generateColorStateList(int color) {
         int[][] states = new int[][] {
@@ -53,14 +53,14 @@ public class ColorUtils {
     private static int darkenColor(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        hsv[2] *= 0.8f;
+        hsv[2] *= 0.6f;
         return Color.HSVToColor(hsv);
     }
 
     private static int greyOutColor(int color) {
         float[] hsv = new float[3];
         Color.colorToHSV(color, hsv);
-        hsv[1] *= 0.8f;
+        hsv[1] *= 0.6f;
         return Color.HSVToColor(hsv);
     }
 
