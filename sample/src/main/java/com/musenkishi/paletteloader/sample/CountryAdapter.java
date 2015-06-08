@@ -17,8 +17,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.musenkishi.paletteloader.PaletteLoader;
 import com.musenkishi.paletteloader.PaletteRequest;
-import com.musenkishi.paletteloader.SwatchColor;
-import com.musenkishi.paletteloader.stuff.VibrantType;
+import com.musenkishi.paletteloader.ColorType;
+import com.musenkishi.paletteloader.swatch.VibrantSwatch;
 
 /**
  * A simple adapter for loading countries names and images.
@@ -64,12 +64,12 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
                     PaletteLoader.with(context, url)
                             .load(bitmap)
                             .setPaletteRequest(new PaletteRequest(
-                                    new VibrantType(SwatchColor.BACKGROUND)))
+                                    new VibrantSwatch(ColorType.BACKGROUND)))
                             .into(viewHolder.rootView);
                     PaletteLoader.with(context, url)
                             .load(bitmap)
                             .setPaletteRequest(new PaletteRequest(
-                                    new VibrantType(SwatchColor.TEXT_TITLE)))
+                                    new VibrantSwatch(ColorType.TEXT_TITLE)))
                             .into(viewHolder.textView);
                 }
                 return false;

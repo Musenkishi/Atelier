@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2014 Freddie (Musenkishi) Lust-Hed
+ * Copyright (C) 2015 Freddie (Musenkishi) Lust-Hed
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package com.musenkishi.paletteloader;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
@@ -29,6 +30,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.CardView;
 import android.util.Pair;
@@ -36,7 +38,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.musenkishi.paletteloader.stuff.VibrantType;
+import com.musenkishi.paletteloader.swatch.VibrantSwatch;
 
 import org.apache.commons.collections4.map.LRUMap;
 
@@ -100,7 +102,7 @@ public class PaletteLoader {
                 case MSG_RENDER_PALETTE:
                     Pair<Bitmap, PaletteTarget> pair = (Pair<Bitmap, PaletteTarget>) message.obj;
                     if (pair != null && !pair.first.isRecycled()) {
-                        Palette palette = Palette.generate(pair.first);
+                        Palette palette = Palette.from(pair.first).generate();
 
                         paletteCache.put(pair.second.getId(), palette);
 
@@ -133,7 +135,7 @@ public class PaletteLoader {
         private Bitmap bitmap;
         private boolean maskDrawable;
         private int fallbackColor = Color.TRANSPARENT;
-        private PaletteRequest paletteRequest = new PaletteRequest(new VibrantType(SwatchColor.BACKGROUND));
+        private PaletteRequest paletteRequest = new PaletteRequest(new VibrantSwatch(ColorType.BACKGROUND));
         private Palette palette;
         private OnPaletteRenderedListener onPaletteRenderedListener;
 
@@ -183,7 +185,7 @@ public class PaletteLoader {
                     applyColorToView(paletteTarget, palette, true);
                     callListener(palette, onPaletteRenderedListener);
                 } else {
-                    if (Build.VERSION.SDK_INT >= 21) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         executorService.submit(new PaletteRenderer(bitmap, paletteTarget));
                     } else {
                         Message bgMessage = backgroundHandler.obtainMessage();
@@ -206,58 +208,16 @@ public class PaletteLoader {
     private static void applyColorToView(final PaletteTarget target, int color, boolean fromCache) {
         if (target.getView() instanceof TextView) {
             applyColorToView((TextView) target.getView(), color, fromCache);
-            return;
         } else if (target.getView() instanceof CardView) {
-            applyColorToCardView((CardView) target.getView(), color, fromCache);
-            return;
-        }
-        if (fromCache) {
-            if (target.getView() instanceof ImageView && target.shouldMaskDrawable()) {
-                ImageView imageView = ((ImageView) target.getView());
-                if (imageView.getDrawable() != null) {
-                    imageView.getDrawable().mutate()
-                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                } else if (imageView.getBackground() != null) {
-                    imageView.getBackground().mutate()
-                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
-                }
-            } else {
-                target.getView().setBackgroundColor(color);
-            }
+            applyColorToView((CardView) target.getView(), color, fromCache);
+        } else if (target.getView() instanceof FloatingActionButton) {
+            applyColorToView((FloatingActionButton) target.getView(), color, fromCache, target.shouldMaskDrawable());
+        } else if (target.getView() instanceof ImageView) {
+            applyColorToView((ImageView) target.getView(), color, fromCache, target.shouldMaskDrawable());
         } else {
-            if (target.getView() instanceof ImageView && target.shouldMaskDrawable()) {
-
-                final ImageView imageView = ((ImageView) target.getView());
-
-                Integer colorFrom;
-                ValueAnimator.AnimatorUpdateListener imageAnimatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                        if (imageView.getDrawable() != null) {
-                            imageView.getDrawable().mutate()
-                                    .setColorFilter((Integer) valueAnimator
-                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
-                        } else if (imageView.getBackground() != null) {
-                            imageView.getBackground().mutate()
-                                    .setColorFilter((Integer) valueAnimator
-                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
-                        }
-                    }
-                };
-                ValueAnimator.AnimatorUpdateListener animatorUpdateListener;
-
-                PaletteTag paletteTag = (PaletteTag) target.getView().getTag();
-                animatorUpdateListener = imageAnimatorUpdateListener;
-                colorFrom = paletteTag.getColor();
-                target.getView().setTag(new PaletteTag(paletteTag.getId(), color));
-
-                Integer colorTo = color;
-                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
-                colorAnimation.addUpdateListener(animatorUpdateListener);
-                colorAnimation.setDuration(300);
-                colorAnimation.start();
+            if (fromCache) {
+                target.getView().setBackgroundColor(color);
             } else {
-
                 Drawable preDrawable;
 
                 if (target.getView().getBackground() == null) {
@@ -297,7 +257,7 @@ public class PaletteLoader {
         }
     }
 
-    private static void applyColorToCardView(final CardView cardView, int color, boolean fromCache) {
+    private static void applyColorToView(final CardView cardView, int color, boolean fromCache) {
         if (fromCache) {
             cardView.setCardBackgroundColor(color);
         } else {
@@ -310,7 +270,142 @@ public class PaletteLoader {
                     cardView.setCardBackgroundColor((Integer) animator.getAnimatedValue());
                 }
             });
+            colorAnimation.setDuration(300);
             colorAnimation.start();
+        }
+    }
+
+    private static void applyColorToView(final FloatingActionButton floatingActionButton, int color, boolean fromCache, boolean shouldMask) {
+        if (fromCache) {
+            if (shouldMask) {
+                if (floatingActionButton.getDrawable() != null) {
+                    floatingActionButton.getDrawable().mutate()
+                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                } else if (floatingActionButton.getBackground() != null) {
+                    floatingActionButton.getBackground().mutate()
+                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                }
+            } else {
+                ColorStateList colorStateList = ColorUtils.generateColorStateList(color);
+                floatingActionButton.setBackgroundTintList(colorStateList);
+            }
+        } else {
+            if (shouldMask) {
+
+                Integer colorFrom;
+                ValueAnimator.AnimatorUpdateListener imageAnimatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        if (floatingActionButton.getDrawable() != null) {
+                            floatingActionButton.getDrawable().mutate()
+                                    .setColorFilter((Integer) valueAnimator
+                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
+                        } else if (floatingActionButton.getBackground() != null) {
+                            floatingActionButton.getBackground().mutate()
+                                    .setColorFilter((Integer) valueAnimator
+                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
+                        }
+                    }
+                };
+                ValueAnimator.AnimatorUpdateListener animatorUpdateListener;
+
+                PaletteTag paletteTag = (PaletteTag) floatingActionButton.getTag();
+                animatorUpdateListener = imageAnimatorUpdateListener;
+                colorFrom = paletteTag.getColor();
+                floatingActionButton.setTag(new PaletteTag(paletteTag.getId(), color));
+
+                Integer colorTo = color;
+                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.addUpdateListener(animatorUpdateListener);
+                colorAnimation.setDuration(300);
+                colorAnimation.start();
+
+            } else {
+
+                Integer colorFrom = Color.parseColor("#FFFAFAFA");
+
+                ColorStateList colorStateList = floatingActionButton.getBackgroundTintList();
+                if (colorStateList != null) {
+                    colorFrom = colorStateList.getDefaultColor();
+                }
+
+                Integer colorTo = color;
+                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        int color = (Integer) animator.getAnimatedValue();
+                        floatingActionButton.setBackgroundTintList(ColorUtils.generateColorStateList(color));
+                    }
+                });
+                colorAnimation.setDuration(1000);
+                colorAnimation.start();
+            }
+        }
+    }
+
+    private static void applyColorToView(final ImageView imageView, int color, boolean fromCache, boolean shouldMask) {
+        if (fromCache) {
+            if (shouldMask) {
+                if (imageView.getDrawable() != null) {
+                    imageView.getDrawable().mutate()
+                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                } else if (imageView.getBackground() != null) {
+                    imageView.getBackground().mutate()
+                            .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
+                }
+            } else {
+                imageView.setBackgroundColor(color);
+            }
+        } else {
+            if (shouldMask) {
+                Integer colorFrom;
+                ValueAnimator.AnimatorUpdateListener imageAnimatorUpdateListener = new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                        if (imageView.getDrawable() != null) {
+                            imageView.getDrawable().mutate()
+                                    .setColorFilter((Integer) valueAnimator
+                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
+                        } else if (imageView.getBackground() != null) {
+                            imageView.getBackground().mutate()
+                                    .setColorFilter((Integer) valueAnimator
+                                            .getAnimatedValue(), PorterDuff.Mode.MULTIPLY);
+                        }
+                    }
+                };
+                ValueAnimator.AnimatorUpdateListener animatorUpdateListener;
+
+                PaletteTag paletteTag = (PaletteTag) imageView.getTag();
+                animatorUpdateListener = imageAnimatorUpdateListener;
+                colorFrom = paletteTag.getColor();
+                imageView.setTag(new PaletteTag(paletteTag.getId(), color));
+
+                Integer colorTo = color;
+                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.addUpdateListener(animatorUpdateListener);
+                colorAnimation.setDuration(300);
+                colorAnimation.start();
+            } else {
+                Drawable preDrawable;
+
+                if (imageView.getBackground() == null) {
+                    preDrawable = new ColorDrawable(Color.TRANSPARENT);
+                } else {
+                    preDrawable = imageView.getBackground();
+                }
+
+                TransitionDrawable transitionDrawable = new TransitionDrawable(new Drawable[]{
+                        preDrawable,
+                        new ColorDrawable(color)
+                });
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    imageView.setBackground(transitionDrawable);
+                } else {
+                    imageView.setBackgroundDrawable(transitionDrawable);
+                }
+                transitionDrawable.startTransition(300);
+            }
         }
     }
 
@@ -354,7 +449,7 @@ public class PaletteLoader {
         @Override
         public void run() {
             if (bitmap != null && !bitmap.isRecycled()) {
-                Palette palette = Palette.generate(bitmap);
+                Palette palette = Palette.from(bitmap).generate();
                 paletteCache.put(paletteTarget.getId(), palette);
 
                 PalettePresenter palettePresenter = new PalettePresenter(
