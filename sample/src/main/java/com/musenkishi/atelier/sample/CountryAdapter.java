@@ -1,4 +1,4 @@
-package com.musenkishi.paletteloader.sample;
+package com.musenkishi.atelier.sample;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,7 +6,6 @@ import android.graphics.Color;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -16,8 +15,9 @@ import com.bumptech.glide.load.resource.bitmap.GlideBitmapDrawable;
 import com.bumptech.glide.load.resource.drawable.GlideDrawable;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.musenkishi.paletteloader.PaletteLoader;
-import com.musenkishi.paletteloader.PaletteRequest;
+import com.musenkishi.atelier.Atelier;
+import com.musenkishi.atelier.ColorType;
+import com.musenkishi.atelier.swatch.VibrantSwatch;
 
 /**
  * A simple adapter for loading countries names and images.
@@ -60,17 +60,13 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
                 Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
                 if (bitmap != null) {
                     Context context = viewHolder.rootView.getContext();
-                    PaletteLoader.with(context, url)
+                    Atelier.with(context, url)
                             .load(bitmap)
-                            .setPaletteRequest(new PaletteRequest(
-                                    PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                    PaletteRequest.SwatchColor.BACKGROUND))
+                            .swatch(new VibrantSwatch(ColorType.BACKGROUND))
                             .into(viewHolder.rootView);
-                    PaletteLoader.with(context, url)
+                    Atelier.with(context, url)
                             .load(bitmap)
-                            .setPaletteRequest(new PaletteRequest(
-                                    PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                    PaletteRequest.SwatchColor.TEXT_TITLE))
+                            .swatch(new VibrantSwatch(ColorType.TEXT_TITLE))
                             .into(viewHolder.textView);
                 }
                 return false;

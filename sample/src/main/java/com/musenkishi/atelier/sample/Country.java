@@ -1,6 +1,7 @@
-package com.musenkishi.paletteloader.sample;
+package com.musenkishi.atelier.sample;
 
 /**
+ * Sample data
  * Created by frelus on 13/05/15.
  */
 public class Country {

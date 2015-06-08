@@ -1,4 +1,4 @@
-package com.musenkishi.paletteloader.sample;
+package com.musenkishi.atelier.sample;
 
 import java.util.ArrayList;
 import java.util.Arrays;

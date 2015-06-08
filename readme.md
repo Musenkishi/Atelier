@@ -1,4 +1,5 @@
-# PaletteLoader
+# Atelier
+*Every artist needs a place where he can paint in peace and store his tools such as palette and swatches.*
 
 ![](https://img.shields.io/github/release/Musenkishi/PaletteLoader.svg?label=JitPack%20Maven)
 
@@ -17,29 +18,27 @@ repositories {
 }
 ```
 
-Now, you can add the PaletteLoader dependency:
+Now, you can add the Atelier dependency:
 ```groovy
-compile 'com.github.Musenkishi:PaletteLoader:1.1.0'
+compile 'com.github.Musenkishi:Atelier:1.2.0'
 ```
 
 ## Usage
 
-Currently PaletteLoader supports classes (and extensions of):
+Currently Atelier supports classes (and extensions of):
 * View
 * ImageView (masking and background)
 * TextView
+* Floating Action Button (icon masking and background)
 * CardView
 
-If the supplied view is or extends `View`, PaletteLoader will apply the color to the background. If view extends `ImageView` and you use `.mask()`, PaletteLoader will apply the color to the image, not the background. And lastly if view is, or extends `TextView`, the color will be applied to the text, not the background. If view is or extends `CardView`, PaletteLoader will apply the color through `.setCardBackgroundColor()`.
+If the supplied view is or extends `View`, Atelier will apply the color to the background. If view extends `ImageView` and you use `.mask()`, Atelier will apply the color to the image, not the background. This is also true for Floating Action Button. And if view is, or extends `TextView`, the color will be applied to the text, not the background. If view is or extends `CardView`, Atelier will apply the color through `.setCardBackgroundColor()`.
 
 ```java
-PaletteLoader.with(context, uniqueStringForBitmap) //For reuse purposes uniqueStringForBitmap could be the url for the image.
-                        .load(bitmap)
-                        .setPaletteRequest(
-                            new PaletteRequest(
-                                PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                PaletteRequest.SwatchColor.BACKGROUND))
-                        .into(view);
+Atelier.with(context, uniqueStringForBitmap) //For reuse purposes uniqueStringForBitmap could be the url for the image.
+        .load(bitmap)
+        .swatch(new DarkVibrantSwatch(ColorType.BACKGROUND))
+        .into(view);
 ```
 
 ## Example
@@ -57,32 +56,23 @@ RequestListener<String, GlideDrawable> glideDrawableRequestListener = new Reques
             Context context = viewHolder.bottomBar.getContext();
 
 		    //Set color to a View's background
-            PaletteLoader.with(context, model)
+            Atelier.with(context, model)
                         .load(bitmap)
-                        .setPaletteRequest(
-                            new PaletteRequest(
-                                PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                PaletteRequest.SwatchColor.BACKGROUND))
+                        .swatch(new VibrantSwatch(ColorType.BACKGROUND))
                         .into(viewHolder.bottomBar);
 
 		    //Set color to text in a TextView
-            PaletteLoader.with(context, model)
+            Atelier.with(context, model)
                         .load(bitmap)
-                        .setPaletteRequest(
-                            new PaletteRequest(
-                                PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                PaletteRequest.SwatchColor.TEXT_TITLE))
+                        .swatch(new VibrantSwatch(ColorType.TEXT_TITLE))
                         .into(viewHolder.textViewResolution);
 
 		    //Colorize an ImageView/ImageButton with .mask().
             //Best result is accomplished with a white image (transparent bakground).
-            PaletteLoader.with(context, model)
+            Atelier.with(context, model)
                         .load(bitmap)
                         .fallbackColor(viewHolder.textViewResolution.getCurrentTextColor())
-                        .setPaletteRequest(
-                            new PaletteRequest(
-                                PaletteRequest.SwatchType.REGULAR_VIBRANT,
-                                PaletteRequest.SwatchColor.TEXT_TITLE))
+                        .swatch(new VibrantSwatch(ColorType.TEXT_TITLE))
                         .mask()
                         .into(viewHolder.imageButton);
             }
@@ -98,7 +88,7 @@ RequestListener<String, GlideDrawable> glideDrawableRequestListener = new Reques
             .into(viewHolder.imageView);
 ```
 
-PaletteLoader will generate the palette in a seperate thread (up to 5 threads on post-lollipop) and apply the color in the assigned view.
+Atelier will generate the palette in a seperate thread (up to 5 threads on post-lollipop) and apply the color in the assigned view.
 
 ## License
 
