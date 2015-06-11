@@ -216,7 +216,7 @@ public class Atelier {
                             .setColorFilter(color, PorterDuff.Mode.MULTIPLY);
                 }
             } else {
-                ColorStateList colorStateList = ColorUtils.generateColorStateList(color);
+                ColorStateList colorStateList = ColorStateList.valueOf(color);
                 floatingActionButton.setBackgroundTintList(colorStateList);
             }
         } else {
@@ -265,7 +265,7 @@ public class Atelier {
                     @Override
                     public void onAnimationUpdate(ValueAnimator animator) {
                         int color = (Integer) animator.getAnimatedValue();
-                        floatingActionButton.setBackgroundTintList(ColorUtils.generateColorStateList(color));
+                        floatingActionButton.setBackgroundTintList(ColorStateList.valueOf(color));
                     }
                 });
                 colorAnimation.setDuration(300);
