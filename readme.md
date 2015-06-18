@@ -20,7 +20,7 @@ repositories {
 
 Now, you can add the Atelier dependency:
 ```groovy
-compile 'com.github.Musenkishi:Atelier:1.2.0'
+compile 'com.github.Musenkishi:Atelier:1.2.2'
 ```
 
 ## Usage
