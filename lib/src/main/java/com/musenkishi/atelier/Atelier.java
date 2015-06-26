@@ -61,6 +61,7 @@ public class Atelier {
 
     private static final int MAX_ITEMS_IN_CACHE = 100;
     private static final int MAX_CONCURRENT_THREADS = 5;
+    private static final int viewTagKey = R.string.atelier_view_tag;
 
     private static int TRUE = 1;
     private static int FALSE = 0;
@@ -239,10 +240,10 @@ public class Atelier {
                 };
                 ValueAnimator.AnimatorUpdateListener animatorUpdateListener;
 
-                PaletteTag paletteTag = (PaletteTag) floatingActionButton.getTag();
+                PaletteTag paletteTag = (PaletteTag) floatingActionButton.getTag(viewTagKey);
                 animatorUpdateListener = imageAnimatorUpdateListener;
                 colorFrom = paletteTag.getColor();
-                floatingActionButton.setTag(new PaletteTag(paletteTag.getId(), color));
+                floatingActionButton.setTag(viewTagKey, new PaletteTag(paletteTag.getId(), color));
 
                 Integer colorTo = color;
                 ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
@@ -306,10 +307,10 @@ public class Atelier {
                 };
                 ValueAnimator.AnimatorUpdateListener animatorUpdateListener;
 
-                PaletteTag paletteTag = (PaletteTag) imageView.getTag();
+                PaletteTag paletteTag = (PaletteTag) imageView.getTag(viewTagKey);
                 animatorUpdateListener = imageAnimatorUpdateListener;
                 colorFrom = paletteTag.getColor();
-                imageView.setTag(new PaletteTag(paletteTag.getId(), color));
+                imageView.setTag(viewTagKey, new PaletteTag(paletteTag.getId(), color));
 
                 Integer colorTo = color;
                 ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
@@ -351,14 +352,14 @@ public class Atelier {
     private static boolean isViewRecycled(PaletteTarget target) {
 
         if (target != null && target.getId() != null && target.getView() != null
-                && target.getView().getTag() != null) {
-            if (target.getView().getTag() instanceof PaletteTag) {
-                return !target.getId().equals(((PaletteTag) target.getView().getTag()).getId());
+                && target.getView().getTag(viewTagKey) != null) {
+            if (target.getView().getTag(viewTagKey) instanceof PaletteTag) {
+                return !target.getId().equals(((PaletteTag) target.getView().getTag(viewTagKey)).getId());
             } else {
-                throw new NoPaletteTagFoundException("PaletteLoader couldn't determine whether" +
-                        " a View has been reused or not. PaletteLoader uses View.setTag() and " +
-                        "View.getTag() for keeping check if a View has been reused and it's " +
-                        "recommended to refrain from setting tags to Views PaletteLoader is using."
+                throw new NoPaletteTagFoundException("Atelier couldn't determine whether" +
+                        " a View has been reused or not. Atelier uses View.setTag(key, object) and " +
+                        "View.getTag(key) for keeping check if a View has been reused and it's " +
+                        "recommended to refrain from setting tags to Views Atelier is using."
                 );
             }
         } else {
@@ -493,7 +494,6 @@ public class Atelier {
 
     private static class PaletteTarget {
         private String id;
-        //        private PaletteRequest paletteRequest;
         private Swatch swatch;
         private View view;
         private boolean maskDrawable;
@@ -503,7 +503,7 @@ public class Atelier {
             this.id = id;
             this.swatch = swatch;
             this.view = view;
-            this.view.setTag(new PaletteTag(this.id, fallbackColor));
+            this.view.setTag(viewTagKey, new PaletteTag(this.id, fallbackColor));
             this.maskDrawable = maskDrawable;
             this.onPaletteRenderedListener = onPaletteRenderedListener;
         }

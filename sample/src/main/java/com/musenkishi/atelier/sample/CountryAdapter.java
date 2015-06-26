@@ -40,6 +40,10 @@ public class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.ViewHold
         viewHolder.textView.setText(country.getName());
 
         viewHolder.rootView.setCardBackgroundColor(Color.parseColor("#FFFAFAFA"));
+
+        viewHolder.rootView.setTag("You can set tags on views without problem because Atelier " +
+                "stores objects using View.setTag(Key, Object).");
+
         viewHolder.textView.setTextColor(Color.BLACK);
 
         RequestListener<String, GlideDrawable> glideDrawableRequestListener = new RequestListener<String, GlideDrawable>() {
