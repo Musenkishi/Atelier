@@ -421,7 +421,13 @@ public class Atelier {
             return this;
         }
 
-        public void into(View view) {
+        public void into(View... views) {
+            for (View view : views) {
+                start(view);
+            }
+        }
+
+        private void start(View view) {
             final PaletteTarget paletteTarget = new PaletteTarget(id, swatch, view, maskDrawable, fallbackColor, onPaletteRenderedListener);
             if (palette != null) {
                 paletteCache.put(paletteTarget.getId(), palette);
