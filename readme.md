@@ -20,7 +20,7 @@ repositories {
 
 Now, you can add the Atelier dependency:
 ```groovy
-compile 'com.github.Musenkishi:Atelier:1.2.2'
+compile 'com.github.Musenkishi:Atelier:1.3.0'
 ```
 
 ## Usage
@@ -38,7 +38,7 @@ If the supplied view is or extends `View`, Atelier will apply the color to the b
 Atelier.with(context, uniqueStringForBitmap) //For reuse purposes uniqueStringForBitmap could be the url for the image.
         .load(bitmap)
         .swatch(new DarkVibrantSwatch(ColorType.BACKGROUND))
-        .into(view);
+        .into(view, view2, ...); //Single or multiple views supported
 ```
 
 ## Example
