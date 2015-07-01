@@ -1,7 +1,7 @@
 # Atelier
 *Every artist needs a place where he can paint in peace and store his tools such as palette and swatches.*
 
-![](https://img.shields.io/github/release/Musenkishi/Atelier.svg?label=JitPack%20Maven)
+![](https://img.shields.io/github/release/Musenkishi/Atelier.svg?label=JitPack%20Maven) [![Build Status](https://travis-ci.org/Musenkishi/Atelier.svg?branch=master)](https://travis-ci.org/Musenkishi/Atelier)
 
 This is a library aiming to simplify the use of Palette, especially in lists such as ListView, GridView, or RecyclerView.
 
