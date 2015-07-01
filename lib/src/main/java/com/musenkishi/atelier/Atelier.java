@@ -118,7 +118,7 @@ public class Atelier {
             );
         }
         if (uiHandler == null || backgroundHandler == null) {
-            setupHandlers(context);
+            setupHandlers(context.getApplicationContext());
         }
         return new AtelierBuilder(id);
     }
