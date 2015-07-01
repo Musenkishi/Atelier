@@ -4,10 +4,12 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
 
 import com.musenkishi.atelier.Atelier;
 import com.musenkishi.atelier.ColorType;
@@ -33,6 +35,15 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingactionbutton);
         loadSamplePaletteIntoFAB(floatingActionButton);
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(findViewById(R.id.main_root),
+                        "The FAB is colored using Atelier on an image",
+                        Snackbar.LENGTH_LONG)
+                        .show();
+            }
+        });
     }
 
     private void loadSamplePaletteIntoFAB(FloatingActionButton floatingActionButton) {
