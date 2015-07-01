@@ -20,7 +20,7 @@ repositories {
 
 Now, you can add the Atelier dependency:
 ```groovy
-compile 'com.github.Musenkishi:Atelier:1.3.0'
+compile 'com.github.Musenkishi:Atelier:1.3.1'
 ```
 
 ## Usage
@@ -42,7 +42,7 @@ Atelier.with(context, uniqueStringForBitmap) //For reuse purposes uniqueStringFo
 ```
 
 ## Example
-In this example [Glide][glide] is used, which is similar to Picasso:
+In this example [Glide][glide] is used. Picasso example can be found in the [sample project][sampleproject]:
 ```java
 RequestListener<String, GlideDrawable> glideDrawableRequestListener = new RequestListener<String, GlideDrawable>() {
     @Override
@@ -88,7 +88,7 @@ RequestListener<String, GlideDrawable> glideDrawableRequestListener = new Reques
             .into(viewHolder.imageView);
 ```
 
-Atelier will generate the palette in a seperate thread (up to 5 threads on post-lollipop) and apply the color in the assigned view.
+Atelier will generate the palette in a separate thread (up to 5 threads on post-lollipop) and apply the color in the assigned view.
 
 ## License
 
@@ -110,3 +110,4 @@ Atelier will generate the palette in a seperate thread (up to 5 threads on post-
  [jmdns]: https://github.com/openhab/jmdns
  [jit]: https://jitpack.io
  [glide]: https://github.com/bumptech/glide
+ [sampleproject]: https://github.com/Musenkishi/Atelier/blob/master/sample/src/main/java/com/musenkishi/atelier/sample/adapter/CountryPicassoAdapter.java
