@@ -1,4 +1,4 @@
-package com.musenkishi.atelier.sample;
+package com.musenkishi.atelier.sample.model;
 
 /**
  * Sample data
