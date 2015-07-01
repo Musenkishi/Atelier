@@ -4,13 +4,15 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 
 import com.musenkishi.atelier.Atelier;
 import com.musenkishi.atelier.ColorType;
-import com.musenkishi.atelier.swatch.DarkVibrantSwatch;
+import com.musenkishi.atelier.sample.adapter.SmartFragmentPagerAdapter;
+import com.musenkishi.atelier.swatch.LightVibrantSwatch;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -19,10 +21,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerview);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(new CountryAdapter());
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+
+        SmartFragmentPagerAdapter pagerAdapter = new SmartFragmentPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(pagerAdapter);
+        tabLayout.setupWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(2);
 
         FloatingActionButton floatingActionButton = (FloatingActionButton) findViewById(R.id.floatingactionbutton);
         loadSamplePaletteIntoFAB(floatingActionButton);
@@ -32,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
         Atelier.with(this, "sample")
                 .load(bitmap)
-                .swatch(new DarkVibrantSwatch(ColorType.BACKGROUND))
+                .swatch(new LightVibrantSwatch(ColorType.BACKGROUND))
                 .into(floatingActionButton);
 
         Atelier.with(this, "sample")
                 .load(bitmap)
-                .swatch(new DarkVibrantSwatch(ColorType.TEXT_TITLE))
+                .swatch(new LightVibrantSwatch(ColorType.TEXT_TITLE))
                 .mask()
                 .into(floatingActionButton);
     }
