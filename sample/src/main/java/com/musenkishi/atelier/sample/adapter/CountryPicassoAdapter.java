@@ -28,14 +28,13 @@ public class CountryPicassoAdapter extends AbsCountryAdapter {
                         if (drawable instanceof BitmapDrawable) {
 
                             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
-                            Context context = viewHolder.rootView.getContext();
 
-                            Atelier.with(context, url)
+                            Atelier.with(url)
                                     .load(bitmap)
                                     .swatch(new VibrantSwatch(ColorType.BACKGROUND))
                                     .into(viewHolder.rootView);
 
-                            Atelier.with(context, url)
+                            Atelier.with(url)
                                     .load(bitmap)
                                     .swatch(new VibrantSwatch(ColorType.TEXT_TITLE))
                                     .into(viewHolder.textView);

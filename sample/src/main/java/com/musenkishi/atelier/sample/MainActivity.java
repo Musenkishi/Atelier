@@ -48,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadSamplePaletteIntoFAB(FloatingActionButton floatingActionButton) {
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.sample);
-        Atelier.with(this, "sample")
+        Atelier.with("sample")
                 .load(bitmap)
                 .swatch(new LightVibrantSwatch(ColorType.BACKGROUND))
                 .into(floatingActionButton);
 
-        Atelier.with(this, "sample")
+        Atelier.with("sample")
                 .load(bitmap)
                 .swatch(new LightVibrantSwatch(ColorType.TEXT_TITLE))
                 .mask()

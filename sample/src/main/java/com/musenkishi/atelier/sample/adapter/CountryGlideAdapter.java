@@ -33,12 +33,11 @@ public class CountryGlideAdapter extends AbsCountryAdapter {
             public boolean onResourceReady(GlideDrawable resource, String url, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
                 Bitmap bitmap = ((GlideBitmapDrawable) resource).getBitmap();
                 if (bitmap != null) {
-                    Context context = viewHolder.rootView.getContext();
-                    Atelier.with(context, url)
+                    Atelier.with(url)
                             .load(bitmap)
                             .swatch(new VibrantSwatch(ColorType.BACKGROUND))
                             .into(viewHolder.rootView);
-                    Atelier.with(context, url)
+                    Atelier.with(url)
                             .load(bitmap)
                             .swatch(new VibrantSwatch(ColorType.TEXT_TITLE))
                             .into(viewHolder.textView);

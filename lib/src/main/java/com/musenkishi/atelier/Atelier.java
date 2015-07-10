@@ -111,14 +111,11 @@ public class Atelier {
         //Don't use
     }
 
-    public static AtelierBuilder with(Context context, String id) {
+    public static AtelierBuilder with(String id) {
         if (paletteCache == null) {
             paletteCache = Collections.synchronizedMap(
                     new LRUMap<String, Palette>(MAX_ITEMS_IN_CACHE)
             );
-        }
-        if (uiHandler == null || backgroundHandler == null) {
-            setupHandlers(context.getApplicationContext());
         }
         return new AtelierBuilder(id);
     }
@@ -428,6 +425,9 @@ public class Atelier {
         }
 
         private void start(View view) {
+            if (uiHandler == null || backgroundHandler == null) {
+                setupHandlers(view.getContext().getApplicationContext());
+            }
             final PaletteTarget paletteTarget = new PaletteTarget(id, swatch, view, maskDrawable, fallbackColor, onPaletteRenderedListener);
             if (palette != null) {
                 paletteCache.put(paletteTarget.getId(), palette);
