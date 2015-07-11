@@ -97,7 +97,7 @@ public class Atelier {
                     Pair<Palette, PaletteTarget> pairDisplay = (Pair<Palette, PaletteTarget>) message.obj;
                     boolean fromCache = message.arg1 == TRUE;
                     applyColorToView(pairDisplay.second, pairDisplay.first, fromCache);
-                    callListener(pairDisplay.first, pairDisplay.second.getListener());
+                    callListener(pairDisplay.first, pairDisplay.second.getSwatch().getColor(pairDisplay.first), pairDisplay.second.getListener());
 
                     break;
 
@@ -364,14 +364,14 @@ public class Atelier {
         }
     }
 
-    private static void callListener(Palette palette, OnPaletteRenderedListener onPaletteRenderedListener) {
+    private static void callListener(Palette palette, int generatedColor, OnPaletteRenderedListener onPaletteRenderedListener) {
         if (onPaletteRenderedListener != null) {
-            onPaletteRenderedListener.onRendered(palette);
+            onPaletteRenderedListener.onRendered(palette, generatedColor);
         }
     }
 
     public interface OnPaletteRenderedListener {
-        void onRendered(Palette palette);
+        void onRendered(Palette palette, int generatedColor);
     }
 
     public static class AtelierBuilder {
@@ -432,12 +432,12 @@ public class Atelier {
             if (palette != null) {
                 paletteCache.put(paletteTarget.getId(), palette);
                 applyColorToView(paletteTarget, palette, false);
-                callListener(palette, onPaletteRenderedListener);
+                callListener(palette, swatch.getColor(palette), onPaletteRenderedListener);
             } else {
                 if (paletteCache.get(id) != null) {
                     Palette palette = paletteCache.get(id);
                     applyColorToView(paletteTarget, palette, true);
-                    callListener(palette, onPaletteRenderedListener);
+                    callListener(palette, swatch.getColor(palette), onPaletteRenderedListener);
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                         executorService.submit(new PaletteRenderer(bitmap, paletteTarget));
@@ -494,7 +494,7 @@ public class Atelier {
         @Override
         public void run() {
             applyColorToView(paletteTarget, palette, fromCache);
-            callListener(palette, paletteTarget.getListener());
+            callListener(palette, paletteTarget.getSwatch().getColor(palette), paletteTarget.getListener());
         }
     }
 
